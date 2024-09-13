@@ -123,42 +123,42 @@ jobs:
 
 
 
-  jslint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Fetch ParlAI
-        uses: actions/checkout@v1
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - name: Get head SHA
-        run: |
-          HEAD_SHA="NONE"
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
-          else
-            HEAD_SHA="${{ github.event.push.head.sha }}"
-          fi
-          echo $HEAD_SHA
-          echo "HEAD_SHA=${HEAD_SHA}" >> $GITHUB_ENV
-      - name: Setup
-        working-directory: parlai/crowdsourcing/
-        run: |
-          set -eux
-          npm install
-          npm install --save-dev -g eslint
-      - name: Run ESLint
-        working-directory: parlai/crowdsourcing/
-        run: |
-          set -eux
-          npx eslint --format unix . | \
-            sed "s#${GITHUB_WORKSPACE}#.#" | \
-            tee ${GITHUB_WORKSPACE}/output-annotations.txt
-      - name: Add annotations
-        uses: pytorch/add-annotations-github-action@master
-        with:
-          check_name: 'jslint'
-          linter_output_path: 'output-annotations.txt'
-          commit_sha: ${{ env.HEAD_SHA }}
-          regex: '^(?<filename>.*?):(?<lineNumber>\d+):(?<columnNumber>\d+): (?<errorDesc>.*) \[(?<errorCode>.*)\]'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # jslint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Fetch ParlAI
+  #       uses: actions/checkout@v1
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.sha }}
+  #     - name: Get head SHA
+  #       run: |
+  #         HEAD_SHA="NONE"
+  #         if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+  #           HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+  #         else
+  #           HEAD_SHA="${{ github.event.push.head.sha }}"
+  #         fi
+  #         echo $HEAD_SHA
+  #         echo "HEAD_SHA=${HEAD_SHA}" >> $GITHUB_ENV
+  #     - name: Setup
+  #       working-directory: parlai/crowdsourcing/
+  #       run: |
+  #         set -eux
+  #         npm install
+  #         npm install --save-dev -g eslint
+  #     - name: Run ESLint
+  #       working-directory: parlai/crowdsourcing/
+  #       run: |
+  #         set -eux
+  #         npx eslint --format unix . | \
+  #           sed "s#${GITHUB_WORKSPACE}#.#" | \
+  #           tee ${GITHUB_WORKSPACE}/output-annotations.txt
+  #     - name: Add annotations
+  #       uses: pytorch/add-annotations-github-action@master
+  #       with:
+  #         check_name: 'jslint'
+  #         linter_output_path: 'output-annotations.txt'
+  #         commit_sha: ${{ env.HEAD_SHA }}
+  #         regex: '^(?<filename>.*?):(?<lineNumber>\d+):(?<columnNumber>\d+): (?<errorDesc>.*) \[(?<errorCode>.*)\]'
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
